@@ -1,0 +1,4 @@
+- Fill azure endpoint and api keys in appsettings
+- Set appropriate base url in frontend backendService.tsx file
+- If you want reload frontend files after applying some changes just run ReloadFrontFiles.ps1
+- For deployment I recommend using Azure vs code extension (deploy to yetizure-custom-backend webapp)
