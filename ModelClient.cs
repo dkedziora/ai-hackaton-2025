@@ -1,3 +1,5 @@
+using System.Net.Http.Headers;
+using System.Text;
 using Azure;
 using Azure.AI.OpenAI;
 using Azure.AI.OpenAI.Chat;
@@ -30,6 +32,29 @@ public class TextModelClient
 
     public async Task<string> TextPrompt(List<ChatMessage> messages, ChatCompletionOptions? options = null, CancellationToken cancellationToken = default)
     {
+        using (HttpClient client = new HttpClient())
+        {
+            client.DefaultRequestHeaders.Add("api-key", "");
+            client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+            var jsonPayload = @"
+            {
+              ""search"":""revenue"",
+              ""queryType"":""semantic"",
+              ""semanticConfiguration"":""azureml-default""
+            }";
+            var endpoint = "https://yetizure-search-service.search.windows.net/indexes/yetizure/docs/search?api-version=2024-11-01-preview";
+
+            HttpContent content = new StringContent(jsonPayload, Encoding.UTF8, "application/json");
+            HttpResponseMessage response2 = await client.PostAsync(endpoint, content);
+
+            string result = await response2.Content.ReadAsStringAsync();
+
+            Console.WriteLine($"Status: {response2.StatusCode}");
+            Console.WriteLine("Response:");
+            Console.WriteLine(result);
+        }
+
         options ??= _defaultOptions;
 #pragma warning disable AOAI001 // Suppress the diagnostic warning  
         options.AddDataSource(new AzureSearchChatDataSource()
