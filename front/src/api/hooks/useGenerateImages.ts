@@ -6,12 +6,6 @@ import { appendChat, selectSession } from "../../store/appStepSlice";
 import { FetchType, Step } from "../../types/types";
 import BaseRepository from "../BaseRequestRepo";
 
-type ImageQueryResponse = {
-  data: {
-    url: string;
-  }[];
-};
-
 const useImageGenerationQuery = (
   step: FetchType,
   message: string,
@@ -19,10 +13,7 @@ const useImageGenerationQuery = (
 ) => {
   const session = useAppSelector(selectSession);
   const dispatch = useAppDispatch();
-  return useCustomQuery<
-    ImageQueryResponse,
-    AxiosError<{ message: string; code: string }>
-  >({
+  return useCustomQuery({
     queryKey: ["imageGeneration", session, message, step],
     queryFn: () =>
       BaseRepository.ImageGenerationRequest(message, session as string),
