@@ -30,14 +30,13 @@ const useImageGenerationQuery = (
       (step === "IMAGES" || step === "all") &&
       !!session &&
       nextFetch === "IMAGES",
-    onSuccess(results) {
-      const urls = results?.data?.map((img) => img.url as string);
+    onSuccess(urls: string) {
       dispatch(
         appendChat({
           isUser: false,
           step: "IMAGES",
           message: message,
-          imageList: urls,
+          imageList: [urls],
           userMessage: message,
           dateTime: new Date().toISOString(),
         })

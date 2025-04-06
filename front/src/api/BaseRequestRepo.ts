@@ -4,7 +4,7 @@ class BaseRepository {
   static async ImageGenerationRequest(message: string, session: string) {
     const response = await apiClient({
       method: "GET",
-      url: `/api/images/${session}/?userPrompt=${message}`,
+      url: `/api/chatImage/${session}/?userPrompt=${message}`,
     });
     return response.data;
   }
