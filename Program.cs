@@ -56,7 +56,8 @@ app.MapGet("api/chatSocialMediaPost/{sessionId}", (Guid sessionId, string? userP
 });
 
 app.MapGet("api/chatImage/{sessionId}", (Guid sessionId, string? userPrompt = null) => {
-    return "https://picsum.photos/1024";
+    var chatSession = chatSessionRepository!.GetSession(sessionId);
+    return chatSession.GenerateImage(userPrompt);
 });
 
 app.MapGet("api/ping", () => {
