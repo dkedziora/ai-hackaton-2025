@@ -50,9 +50,13 @@ app.MapGet("api/chatCampaign/{sessionId}", (Guid sessionId, string userPrompt) =
     return chatSession.GetMarketingCampaign(userPrompt);
 });
 
-app.MapGet("api/chatSocialMediaPost/{sessionId}", (Guid sessionId) => {
+app.MapGet("api/chatSocialMediaPost/{sessionId}", (Guid sessionId, string? userPrompt = null) => {
     var chatSession = chatSessionRepository!.GetSession(sessionId);
-    return chatSession.GenerateSocialMediaPost();
+    return chatSession.GenerateSocialMediaPost(userPrompt);
+});
+
+app.MapGet("api/chatImage/{sessionId}", (Guid sessionId, string? userPrompt = null) => {
+    return "https://picsum.photos/1024";
 });
 
 app.MapGet("api/ping", () => {

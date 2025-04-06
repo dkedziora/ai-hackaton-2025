@@ -38,15 +38,16 @@ public class ChatSession
         return campaignDescription;
     }
 
-    public async Task<string> GenerateSocialMediaPost()
+    public async Task<string> GenerateSocialMediaPost(string? userDescription = null)
     {
         var messages = new List<ChatMessage>
         {
             new SystemChatMessage("You are a professional marketing specialist helping companies to create social media content."),
-            new SystemChatMessage("You will get company marketing campaign, based on this prepare a social media post that can be used in the campaign."),
-            new UserChatMessage(campaignDescription)
+            new SystemChatMessage("You will get company marketing campaign, and optionally additional instructions. Based on this prepare a social media post that can be used in the campaign."),
+            new UserChatMessage(campaignDescription),
+            new UserChatMessage(string.IsNullOrWhiteSpace(userDescription) ? "" : $"Additional instructions: {userDescription}"),
         };
-        
-        return await _textModelClient.Prompt(messages);;
+
+        return await _textModelClient.Prompt(messages);
     }
 }
