@@ -5,6 +5,10 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
+builder.Services.AddSingleton<IChatSessionRepository, ChatSessionRepository>();
+var gptSettings = builder.Configuration.GetSection("AiModels:Gpt").Get<ModelSettings>();
+var dalleSettings = builder.Configuration.GetSection("AiModels:Dalle").Get<ModelSettings>();
+builder.Services.AddSingleton<IChatSessionFactory>(new ChatSessionFactory(gptSettings!, dalleSettings!));
 
 var app = builder.Build();
 
@@ -19,30 +23,25 @@ app.UseStaticFiles();
 
 app.MapFallbackToFile("index.html");
 
-var endpoint = builder.Configuration.GetValue<string>("AzureEndpoint");
-var gptSettings = builder.Configuration.GetSection("AiModels:Gpt").Get<ModelSettings>();
-//var dalleSettings = builder.Configuration.GetSection("AiModels:dalle") as ModelSettings;
+var chatSessionRepository = app.Services.GetService<IChatSessionRepository>();
 
-app.MapGet("api/prompt", (string prompt) => {
-    var gptModel = new AiModel(endpoint!, gptSettings!);
-  
-    var campaignPromptMessagess = new List<ChatMessage>  
-    {  
-        new SystemChatMessage("You are profesional marketing specialist helping companies to create marketing campaign."),
-        new SystemChatMessage("You will get some information about client company, prepare marketing company based on this."),
-        new UserChatMessage(prompt)
-    };
+app.MapGet("api/newChat", () => {
+    return chatSessionRepository!.NewSession();
+});
 
-    var campaignPromptOptions = new ChatCompletionOptions{  
-        Temperature = (float)0.7,  
-        MaxOutputTokenCount = 800,  
-        
-        TopP=(float)0.95,  
-        FrequencyPenalty=(float)0,  
-        PresencePenalty=(float)0
-    };
+app.MapGet("api/chatGreetings/{sessionId}", (Guid sessionId) => {
+    var chatSession = chatSessionRepository!.GetSession(sessionId);
+    return chatSession.GetGreetings();
+});
 
-    return gptModel.Prompt(campaignPromptMessagess, campaignPromptOptions);
+app.MapGet("api/chatCampaign/{sessionId}", (Guid sessionId, string userPrompt) => {
+    var chatSession = chatSessionRepository!.GetSession(sessionId);
+    return chatSession.GetMarketingCampaign(userPrompt);
+});
+
+app.MapGet("api/chatSocialMediaPost/{sessionId}", (Guid sessionId) => {
+    var chatSession = chatSessionRepository!.GetSession(sessionId);
+    return chatSession.GenerateSocialMediaPost();
 });
 
 app.MapGet("api/ping", () => {
