@@ -1,36 +1,35 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
-import { get } from './backendService'
+import { Backdrop, Box, Typography } from "@mui/material";
+import ChatHistory from "./features/ChatHistory/ChatHistory";
+import ChatView from "./features/ChatView/ChatView";
+import ChatForm from "./features/ChatForm/ChatForm";
+import useNewChatSession from "./api/hooks/useNewChat";
+import CircularProgress from "@mui/material/CircularProgress";
 
 function App() {
-  const [promptResponse, setPromptResponse] = useState("ping");
-
+  const { isLoading } = useNewChatSession();
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => get("ping").then(response => setPromptResponse(response))}>
-          {promptResponse}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    <Box className="w-full h-screen flex">
+      <Backdrop
+        sx={(theme) => ({ color: "#bbb", zIndex: theme.zIndex.drawer + 1 })}
+        open={isLoading}
+      >
+        <CircularProgress color="inherit" />
+        <Typography variant="h4" className="pl-5">
+          Application Loading
+        </Typography>
+      </Backdrop>
+
+      <Box className="h-screen w-1/6 bg-amber-200">
+        <ChatHistory />
+      </Box>
+      <Box className="h-screen w-5/6 relative">
+        <ChatView />
+        <Box className="absolute bottom-0 pb-5 py-2 border-t border-gray-200 w-full flex justify-center h-fit z-50 bg-white">
+          <ChatForm />
+        </Box>
+      </Box>
+    </Box>
+  );
 }
 
-export default App
+export default App;
