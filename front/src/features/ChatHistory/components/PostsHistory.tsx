@@ -36,7 +36,10 @@ const PostsHistory = () => {
         </Typography>
       </Paper>
 
-      <List className="top-5 max-w-5/6" sx={{ bgcolor: "background.paper" }}>
+      <List
+        className="top-5 h-2/3 w-full overflow-y-auto"
+        sx={{ bgcolor: "background.paper" }}
+      >
         {posts.map((post) => {
           if (post.isUser || post?.step !== "POSTS") return;
           return (

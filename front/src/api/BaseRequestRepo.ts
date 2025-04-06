@@ -4,7 +4,7 @@ class BaseRepository {
   static async ImageGenerationRequest(message: string, session: string) {
     const response = await apiClient({
       method: "GET",
-      url: `/api/images/${session}/userPrompt=${message}`,
+      url: `/api/images/${session}/?userPrompt=${message}`,
     });
     return response.data;
   }
@@ -20,7 +20,7 @@ class BaseRepository {
   static async postGeneration(message: string, session: string) {
     const response = await apiClient<string>({
       method: "GET",
-      url: `/api/chatSocialMediaPost/${session}/userPrompt=${message}`,
+      url: `/api/chatSocialMediaPost/${session}/?userPrompt=${message}`,
     });
     return response.data;
   }

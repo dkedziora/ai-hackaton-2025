@@ -43,7 +43,10 @@ const ImageHistory = () => {
         </Typography>
       </Paper>
 
-      <List className="top-5 max-w-5/6" sx={{ bgcolor: "background.paper" }}>
+      <List
+        className="top-5 w-full h-2/3 overflow-y-auto"
+        sx={{ bgcolor: "background.paper" }}
+      >
         {images.map((post) => {
           if (post.isUser || post?.step !== "IMAGES") return;
           return (

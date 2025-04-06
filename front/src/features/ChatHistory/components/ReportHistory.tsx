@@ -36,7 +36,10 @@ const ReportHistory = () => {
         </Typography>
       </Paper>
 
-      <List className="top-5 max-w-5/6" sx={{ bgcolor: "background.paper" }}>
+      <List
+        className="top-5 w-full h-2/3 overflow-y-auto"
+        sx={{ bgcolor: "background.paper" }}
+      >
         {reports.map((report) => {
           if (report.isUser || report?.step !== "REPORT") return;
           return (
