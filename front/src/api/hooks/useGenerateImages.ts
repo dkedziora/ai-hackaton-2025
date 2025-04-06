@@ -1,4 +1,3 @@
-import { AxiosError } from "axios";
 import { useAppSelector } from "../../hooks/useAppSelector";
 import useCustomQuery from "./useCustomQuery";
 import { useAppDispatch } from "../../hooks/useAppDispatch";
