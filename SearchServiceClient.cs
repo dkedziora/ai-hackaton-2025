@@ -25,10 +25,20 @@ public class SearchServiceClient
               ""semanticConfiguration"":""azureml-default""
             }";
 
-            HttpContent content = new StringContent(jsonPayload, Encoding.UTF8, "application/json");
-            HttpResponseMessage response = await client.PostAsync(_settings.Endpoint, content);
-
-            string responseString = await response.Content.ReadAsStringAsync();
+            string responseString = string.Empty;
+            try
+            {
+                HttpContent content = new StringContent(jsonPayload, Encoding.UTF8, "application/json");
+                HttpResponseMessage response = await client.PostAsync(_settings.Endpoint, content);
+                response.EnsureSuccessStatusCode();
+                responseString = await response.Content.ReadAsStringAsync();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                responseString = FallbackStrategy();  
+            }           
+            
             var result = new List<string>();
 
             var jsonResponse = JsonNode.Parse(responseString);
@@ -40,5 +50,10 @@ public class SearchServiceClient
 
             return result;
         }
+    }
+
+    private string FallbackStrategy()
+    {
+        return File.ReadAllText("search.json");
     }
 }
