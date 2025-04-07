@@ -1,7 +1,11 @@
 import useCustomQuery from "./useCustomQuery";
 import BaseRepository from "../BaseRequestRepo";
 import { useAppDispatch } from "../../hooks/useAppDispatch";
-import { appendChat, selectSession } from "../../store/appStepSlice";
+import {
+  appendChat,
+  selectRetryData,
+  selectSession,
+} from "../../store/appStepSlice";
 import { FetchType, Step } from "../../types/types";
 import { useAppSelector } from "../../hooks/useAppSelector";
 
@@ -13,14 +17,14 @@ const useGenerateReport = (
 ) => {
   const dispatch = useAppDispatch();
   const session = useAppSelector(selectSession);
+  const retry = useAppSelector(selectRetryData);
 
   return useCustomQuery({
     queryKey: ["report-generation", message, step, session],
     queryFn: () => BaseRepository.reportGeneration(message, session as string),
     enabled:
-      (step === "REPORT" || step === "all") &&
-      !!session &&
-      (nextFetch === "REPORT" || !nextFetch),
+      ((step === "REPORT" || step === "all") && !!session) ||
+      nextFetch === "REPORT",
     staleTime: 0,
     onSuccess(results: string) {
       dispatch(
@@ -32,7 +36,7 @@ const useGenerateReport = (
           dateTime: new Date().toISOString(),
         })
       );
-      setNextFetch("POSTS");
+      if (retry !== null) setNextFetch("POSTS");
     },
   });
 };

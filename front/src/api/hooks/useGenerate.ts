@@ -14,7 +14,7 @@ import { Step } from "../../types/types";
 const useGenerate = () => {
   const fetchStep = useAppSelector(selectIsFetch);
   const dispatch = useAppDispatch();
-  const [nextFetch, setNextFetch] = useState<Step | null>("REPORT");
+  const [nextFetch, setNextFetch] = useState<Step | null>(null);
 
   const message = useAppSelector(selectUserMessage);
 
