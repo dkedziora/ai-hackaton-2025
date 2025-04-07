@@ -8,7 +8,8 @@ import BaseRepository from "../BaseRequestRepo";
 const useImageGenerationQuery = (
   step: FetchType,
   message: string,
-  nextFetch: Step
+  nextFetch: Step | null,
+  setNextFetch: (param: Step | null) => void
 ) => {
   const session = useAppSelector(selectSession);
   const dispatch = useAppDispatch();
@@ -19,7 +20,7 @@ const useImageGenerationQuery = (
     enabled:
       (step === "IMAGES" || step === "all") &&
       !!session &&
-      nextFetch === "IMAGES",
+      (nextFetch === "IMAGES" || !nextFetch),
     onSuccess(urls: string) {
       dispatch(
         appendChat({
@@ -31,6 +32,7 @@ const useImageGenerationQuery = (
           dateTime: new Date().toISOString(),
         })
       );
+      setNextFetch(null);
     },
   });
 };

@@ -8,7 +8,7 @@ import { useAppSelector } from "../../hooks/useAppSelector";
 const useGeneratePost = (
   step: FetchType,
   message: string,
-  nextFetch: Step,
+  nextFetch: Step | null,
   setNextFetch: (param: Step) => void
 ) => {
   const dispatch = useAppDispatch();
@@ -20,7 +20,7 @@ const useGeneratePost = (
     enabled:
       (step === "POSTS" || step === "all") &&
       !!session &&
-      nextFetch === "POSTS",
+      (nextFetch === "POSTS" || !nextFetch),
     staleTime: 0,
     onSuccess(results: string) {
       dispatch(
