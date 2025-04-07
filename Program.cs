@@ -46,9 +46,9 @@ app.MapGet("api/chatGreetings/{sessionId}", (Guid sessionId) => {
     return chatSession.GetGreetings();
 });
 
-app.MapGet("api/chatCampaign/{sessionId}", (Guid sessionId, string userPrompt, bool useIndex = true) => {
+app.MapGet("api/chatCampaign/{sessionId}", (Guid sessionId, string userPrompt) => {
     var chatSession = chatSessionRepository!.GetSession(sessionId);
-    return chatSession.GetMarketingCampaign(userPrompt, useIndex);
+    return chatSession.GetMarketingCampaign(userPrompt, false);
 });
 
 app.MapGet("api/chatSocialMediaPost/{sessionId}", (Guid sessionId, string? userPrompt = null) => {

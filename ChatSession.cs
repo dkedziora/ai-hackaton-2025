@@ -30,7 +30,7 @@ public class ChatSession
         return await _textModelClient.TextPrompt(messages);
     }
 
-    public async Task<string> GetMarketingCampaign(string companyDescription, bool useIndex = true)
+    public async Task<string> GetMarketingCampaign(string companyDescription, bool useIndex)
     {
         _companyDescription = companyDescription;
         var messages = new List<ChatMessage>
