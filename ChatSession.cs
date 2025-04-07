@@ -181,8 +181,7 @@ Feedback and Adaptation: Be open to feedback and ready to adapt your campaign ba
     {
         var messages = new List<ChatMessage>
         {
-            new SystemChatMessage(_systemMessage),
-            new SystemChatMessage("Please generate only social media posts or news articles for the popular platforms related to this topic, the response content must contain only those posts and the previous text is just for information"),
+            new SystemChatMessage("Please generate only social media posts or news articles for the popular platforms related to this topic, the response content must contain only those posts"),
             new UserChatMessage(_campaignDescription),
             new UserChatMessage(string.IsNullOrWhiteSpace(userDescription) ? "" : $"Additional instructions: {userDescription}"),
         };
