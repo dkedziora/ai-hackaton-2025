@@ -1,7 +1,11 @@
 import useCustomQuery from "./useCustomQuery";
 import BaseRepository from "../BaseRequestRepo";
 import { useAppDispatch } from "../../hooks/useAppDispatch";
-import { appendChat, selectSession } from "../../store/appStepSlice";
+import {
+  appendChat,
+  selectRetryData,
+  selectSession,
+} from "../../store/appStepSlice";
 import { FetchType, Step } from "../../types/types";
 import { useAppSelector } from "../../hooks/useAppSelector";
 
@@ -13,14 +17,14 @@ const useGeneratePost = (
 ) => {
   const dispatch = useAppDispatch();
   const session = useAppSelector(selectSession);
+  const retry = useAppSelector(selectRetryData);
 
   return useCustomQuery({
     queryKey: ["post-generation", message, step, session],
     queryFn: () => BaseRepository.postGeneration(message, session as string),
     enabled:
-      (step === "POSTS" || step === "all") &&
-      !!session &&
-      (nextFetch === "POSTS" || !nextFetch),
+      ((step === "POSTS" || step === "all") && !!session) ||
+      nextFetch === "POSTS",
     staleTime: 0,
     onSuccess(results: string) {
       dispatch(
@@ -32,7 +36,7 @@ const useGeneratePost = (
           dateTime: new Date().toISOString(),
         })
       );
-      setNextFetch("IMAGES");
+      if (retry !== null) setNextFetch("IMAGES");
     },
   });
 };
