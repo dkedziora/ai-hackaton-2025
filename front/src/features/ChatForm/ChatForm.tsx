@@ -30,11 +30,12 @@ const ChatForm = () => {
     dispatch(setUserMessage(message));
     dispatch(enableFetch(step));
     setMessage("");
-    dispatch(setRetryData(undefined));
+    dispatch(setRetryData(null));
   }, [message, step]);
 
   const handleClear = useCallback(() => {
     dispatch(clearChat());
+    dispatch(setRetryData(undefined));
   }, []);
 
   return (
@@ -51,7 +52,7 @@ const ChatForm = () => {
         component="label"
         onClick={handleSubmit}
         variant="contained"
-        disabled={!message}
+        disabled={!message || retryData === null}
         tabIndex={-1}
         startIcon={<AutoAwesomeIcon />}
       >

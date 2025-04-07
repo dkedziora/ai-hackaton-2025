@@ -8,7 +8,7 @@ interface AppStep {
   chats: Chat[];
   isFetch: FetchType;
   userMessage: string;
-  retryData: RetryType | undefined;
+  retryData: RetryType | undefined | null;
 }
 
 // Define the initial state using that type
@@ -43,7 +43,10 @@ export const appStepSlice = createSlice({
     clearChat: () => {
       return initialState;
     },
-    setRetryData: (state, action: PayloadAction<RetryType | undefined>) => {
+    setRetryData: (
+      state,
+      action: PayloadAction<RetryType | undefined | null>
+    ) => {
       return { ...state, retryData: action.payload };
     },
   },
