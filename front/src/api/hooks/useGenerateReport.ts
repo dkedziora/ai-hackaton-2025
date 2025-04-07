@@ -8,7 +8,7 @@ import { useAppSelector } from "../../hooks/useAppSelector";
 const useGenerateReport = (
   step: FetchType,
   message: string,
-  nextFetch: Step,
+  nextFetch: Step | null,
   setNextFetch: (param: Step) => void
 ) => {
   const dispatch = useAppDispatch();
@@ -20,7 +20,7 @@ const useGenerateReport = (
     enabled:
       (step === "REPORT" || step === "all") &&
       !!session &&
-      nextFetch === "REPORT",
+      (nextFetch === "REPORT" || !nextFetch),
     staleTime: 0,
     onSuccess(results: string) {
       dispatch(
