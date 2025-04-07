@@ -18,7 +18,8 @@ builder.Services.AddOpenApi();
 builder.Services.AddSingleton<IChatSessionRepository, ChatSessionRepository>();
 var gptSettings = builder.Configuration.GetSection("AiModels:Gpt").Get<ModelSettings>();
 var dalleSettings = builder.Configuration.GetSection("AiModels:Dalle").Get<ModelSettings>();
-builder.Services.AddSingleton<IChatSessionFactory>(new ChatSessionFactory(gptSettings!, dalleSettings!));
+var searchServiceSettings = builder.Configuration.GetSection("SearchService").Get<ModelSettings>();
+builder.Services.AddSingleton<IChatSessionFactory>(new ChatSessionFactory(gptSettings!, dalleSettings!, searchServiceSettings!));
 
 var app = builder.Build();
 
@@ -45,9 +46,9 @@ app.MapGet("api/chatGreetings/{sessionId}", (Guid sessionId) => {
     return chatSession.GetGreetings();
 });
 
-app.MapGet("api/chatCampaign/{sessionId}", (Guid sessionId, string userPrompt) => {
+app.MapGet("api/chatCampaign/{sessionId}", (Guid sessionId, string userPrompt, bool useIndex = true) => {
     var chatSession = chatSessionRepository!.GetSession(sessionId);
-    return chatSession.GetMarketingCampaign(userPrompt);
+    return chatSession.GetMarketingCampaign(userPrompt, useIndex);
 });
 
 app.MapGet("api/chatSocialMediaPost/{sessionId}", (Guid sessionId, string? userPrompt = null) => {

@@ -4,14 +4,19 @@ public class ChatSession
 {
     private readonly TextModelClient _textModelClient;
     private readonly ImageModelClient _imageModelClient;
+    private readonly SearchServiceClient _searchServiceClient;
 
     private string _campaignDescription = string.Empty;
     private string _companyDescription = string.Empty;
 
-    public ChatSession(TextModelClient textModelClient, ImageModelClient imageModelClient)
+    public ChatSession(
+        TextModelClient textModelClient, 
+        ImageModelClient imageModelClient,
+        SearchServiceClient searchServiceClient)
     {
         _textModelClient = textModelClient;
         _imageModelClient = imageModelClient;
+        _searchServiceClient = searchServiceClient;
     }
 
     public async Task<string> GetGreetings()
@@ -25,16 +30,25 @@ public class ChatSession
         return await _textModelClient.TextPrompt(messages);
     }
 
-    public async Task<string> GetMarketingCampaign(string companyDescription)
+    public async Task<string> GetMarketingCampaign(string companyDescription, bool useIndex = true)
     {
         _companyDescription = companyDescription;
         var messages = new List<ChatMessage>
         {
             new SystemChatMessage("You are a professional marketing specialist helping companies to create marketing campaigns."),
             new SystemChatMessage("You will get some information about the client company, prepare a marketing campaign based on this."),
-            new SystemChatMessage("Avoid asking questions, just provide the marketing campaign."),
-            new UserChatMessage(companyDescription)
+            new SystemChatMessage("Avoid asking questions, just provide the marketing campaign."),      
         };
+        if (useIndex)
+        {
+            var searchResult = await _searchServiceClient.SearchAsync(companyDescription);
+            messages.Add(new SystemChatMessage("You may use additional information from the documents search result."));
+            foreach (var result in searchResult)
+            {
+                messages.Add(new SystemChatMessage(result));
+            }
+        }
+        messages.Add(new UserChatMessage(companyDescription));
 
         _campaignDescription = await _textModelClient.TextPrompt(messages);
         return _campaignDescription;
@@ -57,7 +71,7 @@ public class ChatSession
     {
         return await _imageModelClient.ImagePrompt(
             $"Create an image to use in social media post for described company. "
-            + "You may get additional instructions. Company description: {_companyDescription}" 
+            + $"You may get additional instructions. Company description: {_companyDescription}" 
             + (string.IsNullOrWhiteSpace(userDescription) ? "" : $"Additional instructions: {userDescription}"));
     }
 }
