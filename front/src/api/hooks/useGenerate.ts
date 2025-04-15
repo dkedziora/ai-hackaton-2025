@@ -14,7 +14,7 @@ import { Step } from "../../types/types";
 const useGenerate = () => {
   const fetchStep = useAppSelector(selectIsFetch);
   const dispatch = useAppDispatch();
-  const [nextFetch, setNextFetch] = useState<Step>("REPORT");
+  const [nextFetch, setNextFetch] = useState<Step | null>(null);
 
   const message = useAppSelector(selectUserMessage);
 
@@ -43,7 +43,12 @@ const useGenerate = () => {
     nextFetch,
     setNextFetch
   );
-  const imageQuery = useImageGenerationQuery(fetchStep, message, nextFetch);
+  const imageQuery = useImageGenerationQuery(
+    fetchStep,
+    message,
+    nextFetch,
+    setNextFetch
+  );
 
   return {
     isError: postQuery.isError || reportQuery.isError || imageQuery.isError,
